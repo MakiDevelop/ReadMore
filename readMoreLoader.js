@@ -1,73 +1,37 @@
-console.log("Starting script execution...");  // 测试脚本是否加载
+// 定义一个函数，用于动态加载 CDN 上的 JavaScript 文件
+function loadScriptFromCDN(src, callback) {
+	const script = document.createElement('script');
+	script.src = src;
+	script.async = true;
+	script.onload = callback;
+	script.onerror = function() {
+		console.error(`Failed to load script from ${src}`);
+	};
+	document.head.appendChild(script);
+}
 
-    window.onload = function() {
-        console.log("Window loaded. Starting the observeContentAndExecute function.");
+// 插入“查看更多模块”到 .article-content-inner 容器的末尾
+function insertReadMoreModule() {
+	const container = document.querySelector('.article-content-inner');
+	if (container) {
+		const readmoreContainer = document.createElement('div');
+		readmoreContainer.setAttribute('id', 'readmore_box_v4');
+		container.appendChild(readmoreContainer);
 
-        function observeContentAndExecute() {
-            console.log("Starting to observe for .article-content-inner...");
+		// 调用 nerdReadMoreBoxV4 方法插入内容
+		if (typeof $.nerdReadMoreBoxV4 === 'function') {
+			$.nerdReadMoreBoxV4({
+				read_more_cta: '查看更多文章', // 设置按钮 CTA 文案，可根据需要调整
+				article_readmore_status: 'site', // 根据需求设置
+				addon_username: '' // 如果需要，可以设置用户名
+			});
+		} else {
+			console.error('nerdReadMoreBoxV4 function is not available');
+		}
+	} else {
+		console.error('.article-content-inner container not found');
+	}
+}
 
-            const observer = new MutationObserver((mutations, obs) => {
-                const container = document.querySelector('.article-content-inner');
-                if (container) {
-                    console.log(".article-content-inner found!");
-                    obs.disconnect();
-
-                    function insertReadMoreModule() {
-                        console.log("Attempting to insert 'read more' module...");
-
-                        const readmoreContainer = document.createElement('div');
-                        readmoreContainer.setAttribute('id', 'readmore_box_v4');
-                        container.appendChild(readmoreContainer);
-                        console.log("'read more' module inserted into .article-content-inner");
-
-                        const checkInterval = setInterval(() => {
-                            console.log("Checking if jQuery and nerdReadMoreBoxV4 are loaded...");
-                            if (typeof jQuery !== 'undefined' && typeof jQuery.nerdReadMoreBoxV4 === 'function') {
-                                clearInterval(checkInterval);
-                                console.log("jQuery and nerdReadMoreBoxV4 are loaded. Initializing 'read more' functionality.");
-
-                                jQuery.nerdReadMoreBoxV4({
-                                    read_more_cta: '查看更多文章',
-                                    article_readmore_status: 'site',
-                                    addon_username: ''
-                                });
-                            }
-                        }, 100);
-                    }
-
-                    function loadScriptFromCDN(src, callback) {
-                        console.log(`Loading script from ${src}...`);
-                        const script = document.createElement('script');
-                        script.src = src;
-                        script.async = true;
-                        script.onload = () => {
-                            console.log(`Script loaded successfully from ${src}`);
-                            callback();
-                        };
-                        script.onerror = function() {
-                            console.error(`Failed to load script from ${src}`);
-                        };
-                        document.head.appendChild(script);
-                    }
-
-                    if (typeof jQuery === 'undefined') {
-                        console.log("jQuery is not loaded. Loading jQuery from CDN...");
-                        loadScriptFromCDN('https://code.jquery.com/jquery-3.6.0.min.js', () => {
-                            console.log("jQuery loaded. Now loading readmorevm.js...");
-                            loadScriptFromCDN('https://cdn.jsdelivr.net/gh/MakiDevelop/ReadMore@main/readmorevm.js', insertReadMoreModule);
-                        });
-                    } else {
-                        console.log("jQuery is already loaded. Loading readmorevm.js directly...");
-                        loadScriptFromCDN('https://cdn.jsdelivr.net/gh/MakiDevelop/ReadMore@main/readmorevm.js', insertReadMoreModule);
-                    }
-                }
-            });
-
-            observer.observe(document, {
-                childList: true,
-                subtree: true
-            });
-        }
-
-        observeContentAndExecute();
-    };Ï
+// 使用 GitHub CDN 上的 script URL，加载优化后的代码
+loadScriptFromCDN('https://cdn.jsdelivr.net/gh/MakiDevelop/ReadMore@main/readmorevm.js', insertReadMoreModule);
