@@ -2,8 +2,8 @@
 	$.extend({
 		nerdReadMoreBoxV4: function(options) {
 			// 非內文頁就不執行
-			const location_url = location.href;
-			if (!location_url.includes("/blog/post/")) return;
+			// const location_url = location.href;
+			// if (!location_url.includes("/blog/post/")) return;
 
 			const read_more_cta = options['read_more_cta'] || '';
 			const article_readmore_status = options['article_readmore_status'] || 'site';
